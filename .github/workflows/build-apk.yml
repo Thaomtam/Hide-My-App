@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repository
+      # 1. Clone repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -21,7 +21,7 @@ jobs:
         uses: android-actions/setup-android@v2
         with:
           ndk: true
-          ndk-version: '25.2.9519653' # Phiên bản NDK (thay đổi nếu cần)
+          ndk-version: '25.2.9519653'
 
       # 3. Build module
       - name: Build Zygisk Module
@@ -33,18 +33,23 @@ jobs:
                 -DANDROID_PLATFORM=android-21 \
                 -DCMAKE_BUILD_TYPE=Release \
                 -B../build
-          cmake --build ../build
+          cmake --build ../build || exit 1
 
-      # 4. Package files into ZIP
+      # 4. Debug build output
+      - name: Debug Build Output
+        run: |
+          ls -R build
+
+      # 5. Package Zygisk Module
       - name: Package Zygisk Module
         run: |
           mkdir -p output
           cp -r module.prop post-fs-data.sh service.sh config output/
-          cp build/zygisk/zygisk.so output/zygisk/
+          cp build/libzygisk.so output/zygisk/zygisk.so
           cd output
           zip -r ../Zygisk-prop-app.zip ./*
 
-      # 5. Upload release to GitHub
+      # 6. Upload release to GitHub
       - name: Upload to GitHub Releases
         uses: ncipollo/release-action@v1
         with:
