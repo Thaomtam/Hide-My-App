@@ -1,0 +1,46 @@
+name: Build LSPosed Module APK
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      # Bước 1: Checkout mã nguồn
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Bước 2: Thiết lập môi trường Java và Android SDK
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 34
+          build-tools: '34.0.0'
+          ndk: '23.1.7779620'
+
+      # Bước 3: Tải xuống các dependencies
+      - name: Install dependencies
+        run: ./gradlew dependencies
+
+      # Bước 4: Build APK
+      - name: Build APK
+        run: ./gradlew assembleRelease
+
+      # Bước 5: Upload APK artifact
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-lsposed-module-apk
+          path: app/build/outputs/apk/release/*.apk
