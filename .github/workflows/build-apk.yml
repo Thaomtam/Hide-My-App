@@ -3,8 +3,8 @@ name: Build and Release Zygisk Module
 on:
   push:
     tags:
-      - 'v*' # Kích hoạt khi đẩy tag bắt đầu bằng 'v'
-  workflow_dispatch: # Cho phép chạy thủ công
+      - 'v*'  # Chạy workflow khi có tag bắt đầu bằng "v"
+  workflow_dispatch:  # Cho phép chạy thủ công
 
 jobs:
   build:
@@ -12,15 +12,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Clone repository
+      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Setup Android NDK environment
-      - name: Setup Android NDK
-        uses: android/ndk@v1
+      # 2. Setup Android SDK and NDK
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
         with:
-          ndk-version: r25c # Đảm bảo đúng phiên bản bạn cần
+          ndk: true
+          ndk-version: '25.2.9519653' # Phiên bản NDK (thay đổi nếu cần)
 
       # 3. Build module
       - name: Build Zygisk Module
