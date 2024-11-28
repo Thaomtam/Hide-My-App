@@ -1,0 +1,6 @@
+id=zygisk-prop-app
+name=Zygisk Prop App Faker
+version=1.0
+versionCode=1
+author=YourName
+description=Fake thông tin prop theo ứng dụng mục tiêu.

@@ -1,0 +1,8 @@
+MANUFACTURER=App2Manufacturer
+BRAND=App2Brand
+MODEL=App2Model
+DEVICE=App2Device
+BOARD=App2Board
+HARDWARE=App2Hardware
+BOOTLOADER=App2Bootloader
+FINGERPRINT=App2/FakeBrand/App2Device:10/QKQ1.190716.003:user/release-keys

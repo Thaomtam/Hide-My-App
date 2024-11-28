@@ -1,47 +1,58 @@
-name: Build LSPosed Module APK
+name: Build and Release Zygisk Module
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
-  pull_request:
+    tags:
+      - 'v*' # Kích hoạt khi đẩy tag bắt đầu bằng 'v'
+  workflow_dispatch: # Cho phép chạy thủ công
 
 jobs:
   build:
-    name: Build APK
+    name: Build Zygisk Module
     runs-on: ubuntu-latest
 
     steps:
-      # Bước 1: Checkout mã nguồn
+      # 1. Clone repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Bước 2: Thiết lập môi trường Java và Android SDK
-      - name: Set up JDK
-        uses: actions/setup-java@v3
+      # 2. Setup Android NDK environment
+      - name: Setup Android NDK
+        uses: android/ndk@v1
         with:
-          java-version: '11'
-          distribution: 'temurin'
+          ndk-version: r25c # Đảm bảo đúng phiên bản bạn cần
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
+      # 3. Build module
+      - name: Build Zygisk Module
+        run: |
+          mkdir -p build
+          cd zygisk
+          cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
+                -DANDROID_ABI=arm64-v8a \
+                -DANDROID_PLATFORM=android-21 \
+                -DCMAKE_BUILD_TYPE=Release \
+                -B../build
+          cmake --build ../build
+
+      # 4. Package files into ZIP
+      - name: Package Zygisk Module
+        run: |
+          mkdir -p output
+          cp -r module.prop post-fs-data.sh service.sh config output/
+          cp build/zygisk/zygisk.so output/zygisk/
+          cd output
+          zip -r ../Zygisk-prop-app.zip ./*
+
+      # 5. Upload release to GitHub
+      - name: Upload to GitHub Releases
+        uses: ncipollo/release-action@v1
         with:
-          api-level: 34
-          build-tools: '34.0.0'
-          ndk: '23.1.7779620'
-
-      # Bước 3: Tải xuống các dependencies
-      - name: Install dependencies
-        run: ./gradlew dependencies
-
-      # Bước 4: Build APK
-      - name: Build APK
-        run: ./gradlew assembleRelease
-
-      # Bước 5: Upload APK artifact
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
-        with:
-          name: my-lsposed-module-apk
-          path: app/build/outputs/apk/release/*.apk
+          artifacts: Zygisk-prop-app.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+          name: Zygisk Prop App v${{ github.ref_name }}
+          body: |
+            # Zygisk Prop App Module
+            Automatically generated release for version ${{ github.ref_name }}.
+          draft: false
+          prerelease: false

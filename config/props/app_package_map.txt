@@ -1,0 +1,2 @@
+com.example.rvx=app1.prop
+com.example.rvx1=app2.prop

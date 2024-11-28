@@ -1,0 +1,8 @@
+MANUFACTURER=FakeManufacturer
+BRAND=FakeBrand
+MODEL=FakeModel
+DEVICE=FakeDevice
+BOARD=FakeBoard
+HARDWARE=FakeHardware
+BOOTLOADER=FakeBootloader
+FINGERPRINT=Fake/FakeBrand/FakeDevice:10/QKQ1.190716.003:user/release-keys

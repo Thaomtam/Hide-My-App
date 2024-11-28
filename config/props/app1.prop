@@ -1,0 +1,8 @@
+MANUFACTURER=App1Manufacturer
+BRAND=App1Brand
+MODEL=App1Model
+DEVICE=App1Device
+BOARD=App1Board
+HARDWARE=App1Hardware
+BOOTLOADER=App1Bootloader
+FINGERPRINT=App1/FakeBrand/App1Device:10/QKQ1.190716.003:user/release-keys
